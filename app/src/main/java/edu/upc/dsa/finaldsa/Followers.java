@@ -98,7 +98,7 @@ public class Followers extends AppCompatActivity {
         }
 
 
-        //NAME & IMAGE USER
+        //NAME AND IMAGE USER
         try {
             Bundle extra = getIntent().getExtras();
             String name = extra.getString("name");
