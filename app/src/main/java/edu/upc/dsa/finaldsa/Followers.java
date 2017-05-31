@@ -26,7 +26,7 @@ public class Followers extends AppCompatActivity {
     private ListView lv;
     private ProgressBar pb;
 
-
+    //FEM UN GETFOLLOWERS AMB EL PARAMETRE QUE HEM OBTINGUT COM NAME
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +40,7 @@ public class Followers extends AppCompatActivity {
         }
 
     }
-
+        //FUNCIO QUE MOSTRA ELS SEGUIDORS QUE TENIM
     private void getFollowers(String name){
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         Retrofit.Builder builder = new Retrofit.Builder()
@@ -58,12 +58,13 @@ public class Followers extends AppCompatActivity {
 
         // Fetch and print a list of the contributors to the library.
         call.enqueue(new Callback<List<Follower>>() {
-
+            //LLISTA DE SEGUIDORS
             //***************Comprobacion de que recoge los datos**********
             @Override
             public void onResponse(Call<List<Follower>> call, Response<List<Follower>> response) {
                 pb =(ProgressBar) findViewById(R.id.progressBar);
                 if(response.code()==200){
+
                     listFollowers=(List<Follower>) response.body();
                     lv = (ListView) findViewById(R.id.listV);
                     listNames = new ArrayList<>();
