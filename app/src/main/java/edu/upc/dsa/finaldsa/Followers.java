@@ -1,13 +1,23 @@
 package edu.upc.dsa.finaldsa;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,79 +30,153 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Followers extends AppCompatActivity {
 
-    private final String BASE_URL= "https://api.github.com";
-    private List<Follower> listFollowers;
-    private List<String> listNames;
-    private ListView lv;
-    private ProgressBar pb;
+    private final String BASE_URL= "https://api.github.com"; //URL
+    private List<Follower> listaFollow;
+    private List<String> listaNombres;
+    private ListView listv;
+    private ImageView imagen;
+    private ProgressBar progressbar;
+    final String tag = "MAPACT";
 
     //FEM UN GETFOLLOWERS AMB EL PARAMETRE QUE HEM OBTINGUT COM NAME
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followers);
+
+        //LIST OF FOLLOWERS
         try {
             Bundle extra = getIntent().getExtras();
             String name = extra.getString("name");
-            getFollowers(name);
-        }catch (Exception e){
-            Toast.makeText(Followers.this, "Error1", Toast.LENGTH_SHORT).show();
+
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            Retrofit.Builder builder = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create());
+//
+            Retrofit retrofit =
+                    builder.client(httpClient.build()).build();
+
+            // Create an instance of our GitHub API interface.
+            Service getList = retrofit.create(Service.class);
+
+            // Create a call instance for looking up Retrofit contributors.
+            Call<List<Follower>> call = getList.getList(name);
+
+            // Fetch and print a list of the contributors to the library.
+            call.enqueue(new Callback<List<Follower>>() {
+                @Override
+                public void onResponse(Call<List<Follower>> call, Response<List<Follower>> response) {
+                    progressbar = (ProgressBar) findViewById(R.id.progress);
+                    if(response.code()==200){
+                        listaFollow=(List<Follower>) response.body();
+                        listv = (ListView) findViewById(R.id.listaV);
+                        listaNombres = new ArrayList<>();
+                        for (int j=0; j < listaFollow.size(); j++){
+                            String item = listaFollow.get(j).getLogin();
+                            listaNombres.add (item);
+                        }
+                        ArrayAdapter<String> arrayAdapter =  new ArrayAdapter<String>
+                                (Followers.this, android.R.layout.simple_list_item_1, listaNombres);
+                        listv.setAdapter(arrayAdapter);
+                    }
+                    else {
+                        Toast.makeText(Followers.this, "No funciona: "+response.code(), Toast.LENGTH_SHORT).show();
+                        Followers.this.finish();
+                    }
+                    progressbar.setVisibility(ListView.GONE);
+                }
+
+                @Override
+                public void onFailure(Call<List<Follower>> call, Throwable t) {
+                    Toast.makeText(Followers.this, "No funciona", Toast.LENGTH_SHORT).show();
+                    Followers.this.finish();
+                }
+            });
+        }
+        catch (Exception e){
+            Toast.makeText(Followers.this, "No funciona", Toast.LENGTH_SHORT).show();
+        }
+
+
+        //NAME & IMAGE USER
+        try {
+            Bundle extra = getIntent().getExtras();
+            String name = extra.getString("name");
+
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            Retrofit.Builder builder = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create());
+//
+            Retrofit retrofit =
+                    builder.client(httpClient.build()).build();
+
+            // Create an instance of our GitHub API interface.
+            Service getList = retrofit.create(Service.class);
+
+            // Create a call instance for looking up Retrofit contributors.
+            Call<Follower> call = getList.getFollower(name);
+
+            // Fetch and print a list of the contributors to the library.
+            call.enqueue(new Callback<Follower>() {
+                @Override
+                public void onResponse(Call<Follower> call, Response<Follower> response) {
+                    if(response.code()==200){
+                        Follower a = (Follower) response.body();
+                        //NAME
+                        String name = a.getName();
+                        TextView visualizarnombre = (TextView)findViewById(R.id.textView2);
+                        visualizarnombre.setText(name);
+                        Log.d(tag, " !!!!!iconName: "+name);
+
+                        //NUMBER OF REPOS
+                        int numrepos = a.getPublic_repos();
+                        TextView visualizarrepos = (TextView)findViewById(R.id.textView5);
+                        visualizarrepos.setText(""+numrepos);
+                        Log.d(tag, " numrepos: "+numrepos);
+
+                        //NUMBER OF FOLLOWINGS
+                        int numfollow = a.getFollowing();
+                        TextView visualizarfollows = (TextView)findViewById(R.id.textView6);
+                        visualizarfollows.setText(""+numfollow);
+                        Log.d(tag, " numfollows: "+numrepos);
+
+                        //IMAGE
+                        /*String AvatarUrl;
+                        AvatarUrl = a.getAvatar_url();
+                        try {
+                            drawableFromUrl(AvatarUrl);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
+                    }
+                    else {
+                        Toast.makeText(Followers.this, "No funciona 1: "+response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Follower> call, Throwable t) {
+                    Toast.makeText(Followers.this, "No funciona 2", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        catch (Exception e){
+            Toast.makeText(Followers.this, "No funciona", Toast.LENGTH_SHORT).show();
         }
 
     }
-        //FUNCIO QUE MOSTRA ELS SEGUIDORS QUE TENIM
-    private void getFollowers(String name){
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create());
-//
-        Retrofit retrofit =
-                builder.client(httpClient.build()).build();
 
-        // Create an instance of our GitHub API interface.
-        Service getList = retrofit.create(Service.class);
+    public static Drawable drawableFromUrl(String url) throws IOException {
+        Bitmap x;
 
-        // Create a call instance for looking up Retrofit contributors.
-        Call<List<Follower>> call = getList.getList(name);
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.connect();
+        InputStream input = connection.getInputStream();
 
-        // Fetch and print a list of the contributors to the library.
-        call.enqueue(new Callback<List<Follower>>() {
-            //LLISTA DE SEGUIDORS
-            //***************Comprobacion de que recoge los datos**********
-            @Override
-            public void onResponse(Call<List<Follower>> call, Response<List<Follower>> response) {
-                pb =(ProgressBar) findViewById(R.id.progressBar);
-                if(response.code()==200){
-
-                    listFollowers=(List<Follower>) response.body();
-                    lv = (ListView) findViewById(R.id.listV);
-                    listNames = new ArrayList<>();
-                    for (int j=0; j < listFollowers.size(); j++){
-                        String item = listFollowers.get(j).getLogin();
-                        listNames.add (item);
-                    }
-                    ArrayAdapter<String> arrayAdapter =  new ArrayAdapter<String>
-                            (Followers.this, android.R.layout.simple_list_item_1, listNames);
-                    lv.setAdapter(arrayAdapter);
-                }
-                else if (response.code() == 404) {
-                    Toast.makeText(Followers.this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
-                    Followers.this.finish();
-                }
-                else {
-                    Toast.makeText(Followers.this, "Error2: "+response.code(), Toast.LENGTH_SHORT).show();
-                    Followers.this.finish();
-                }
-
-                pb.setVisibility(ListView.GONE);
-            }
-
-            @Override
-            public void onFailure(Call<List<Follower>> call, Throwable t) {
-                Toast.makeText(Followers.this, "Error3", Toast.LENGTH_SHORT).show();
-                Followers.this.finish();
-            }
-        });
+        x = BitmapFactory.decodeStream(input);
+        return new BitmapDrawable(x);
     }
+
 }

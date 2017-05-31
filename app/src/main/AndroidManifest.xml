@@ -19,7 +19,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Followers" />
-        <activity android:name=".Repos"></activity>
     </application>
 
 </manifest>
