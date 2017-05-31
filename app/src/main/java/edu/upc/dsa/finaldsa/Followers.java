@@ -13,14 +13,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.bumptech.glide.Glide;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -143,13 +142,19 @@ public class Followers extends AppCompatActivity {
                         Log.d(tag, " numfollows: "+numrepos);
 
                         //IMAGE
-                        /*String AvatarUrl;
-                        AvatarUrl = a.getAvatar_url();
-                        try {
-                            drawableFromUrl(AvatarUrl);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }*/
+                        String AvatarUrl = a.getAvatar_url();
+                       /* try {
+                        String AvatarUrl = a.getAvatar_url();
+                         try {
+                              drawableFromUrl(AvatarUrl);
+                          } catch (IOException e) {
+                              e.printStackTrace();
+                          }*/
+                        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+                        Log.d(tag, "IMAGE");
+                        Glide.with(Followers.this)
+                                .load(AvatarUrl)
+                                .into(imageView);
                     }
                     else {
                         Toast.makeText(Followers.this, "No funciona 1: "+response.code(), Toast.LENGTH_SHORT).show();
@@ -167,8 +172,7 @@ public class Followers extends AppCompatActivity {
         }
 
     }
-
-    public static Drawable drawableFromUrl(String url) throws IOException {
+   /* public static Drawable drawableFromUrl(String url) throws IOException {
         Bitmap x;
 
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -178,5 +182,5 @@ public class Followers extends AppCompatActivity {
         x = BitmapFactory.decodeStream(input);
         return new BitmapDrawable(x);
     }
-
+    */
 }
