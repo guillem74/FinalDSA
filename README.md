@@ -2,9 +2,7 @@
 EXAMEN FINAL ACABAT (EXAMPLES OF ME AND 2 TEACHERS REPOS):
 
 ![guillem](https://cloud.githubusercontent.com/assets/25775763/26657985/965ea2b8-4667-11e7-8b93-4865cfd42e6b.PNG)
-
 ![toni](https://cloud.githubusercontent.com/assets/25775763/26657996/a27e33c4-4667-11e7-93ad-1b59180db4b3.PNG)
-
 ![juan](https://cloud.githubusercontent.com/assets/25775763/26657999/a7c137be-4667-11e7-9fec-1d98993d538c.PNG)
 
 
