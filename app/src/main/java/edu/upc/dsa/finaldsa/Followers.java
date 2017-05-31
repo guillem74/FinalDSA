@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Followers extends AppCompatActivity {
     private List<Follower> listFollowers;
     private List<String> listNames;
     private ListView lv;
+    private ProgressBar pb;
 
 
     @Override
@@ -60,8 +62,7 @@ public class Followers extends AppCompatActivity {
             //***************Comprobacion de que recoge los datos**********
             @Override
             public void onResponse(Call<List<Follower>> call, Response<List<Follower>> response) {
-
-                System.out.println();
+                pb =(ProgressBar) findViewById(R.id.progressBar);
                 if(response.code()==200){
                     listFollowers=(List<Follower>) response.body();
                     lv = (ListView) findViewById(R.id.listV);
@@ -76,15 +77,20 @@ public class Followers extends AppCompatActivity {
                 }
                 else if (response.code() == 404) {
                     Toast.makeText(Followers.this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+                    Followers.this.finish();
                 }
                 else {
                     Toast.makeText(Followers.this, "Error2: "+response.code(), Toast.LENGTH_SHORT).show();
+                    Followers.this.finish();
                 }
+
+                pb.setVisibility(ListView.GONE);
             }
 
             @Override
             public void onFailure(Call<List<Follower>> call, Throwable t) {
                 Toast.makeText(Followers.this, "Error3", Toast.LENGTH_SHORT).show();
+                Followers.this.finish();
             }
         });
     }

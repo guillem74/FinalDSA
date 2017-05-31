@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context="edu.upc.dsa.finaldsa.Followers">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="219dp"
+        android:indeterminate="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
     <ListView
         android:id="@+id/listV"
         android:layout_width="0dp"
@@ -22,6 +35,5 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>
